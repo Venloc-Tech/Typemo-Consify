@@ -7,7 +7,7 @@ The pages are not stored here. They live in `docs/<language>/<version>` of the T
 ## Run it
 
 ```bash
-bun install          # needs NODE_AUTH_TOKEN (or ~/.npmrc) with read:packages: @consify/* are on GitHub Packages
+bun install          # @consify/* are on GitHub Packages: ~/.npmrc needs //npm.pkg.github.com/:_authToken=<read:packages token>
 bun run dev          # syncs the docs from ../Typemo, then the dev server
 bun run build        # syncs, then the static site in build/client
 ```

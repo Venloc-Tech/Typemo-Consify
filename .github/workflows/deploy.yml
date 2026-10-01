@@ -52,11 +52,21 @@ jobs:
         working-directory: .typemo
         run: bun install --frozen-lockfile
 
-      # @consify/* are on GitHub Packages: a token with read:packages of the account that publishes them.
+      # @consify/* are on GitHub Packages: a token with read:packages of the account that publishes them. Bun reads
+      # the token only from an .npmrc (not from NODE_AUTH_TOKEN alone), so it goes into the runner's own ~/.npmrc;
+      # the project's .npmrc keeps only the registry, and a local install keeps using the developer's ~/.npmrc.
+      - name: Authenticate to GitHub Packages
+        env:
+          CONSIFY_PACKAGES_TOKEN: ${{ secrets.CONSIFY_PACKAGES_TOKEN }}
+        run: |
+          if [ -z "$CONSIFY_PACKAGES_TOKEN" ]; then
+            echo "::error::The secret CONSIFY_PACKAGES_TOKEN is not set (a classic token with read:packages)"
+            exit 1
+          fi
+          echo "//npm.pkg.github.com/:_authToken=${CONSIFY_PACKAGES_TOKEN}" >> ~/.npmrc
+
       - name: Install the site
         run: bun install --frozen-lockfile
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.CONSIFY_PACKAGES_TOKEN }}
 
       - name: Sync the docs of Typemo
         run: bun run sync
