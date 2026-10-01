@@ -13,9 +13,9 @@
     "typecheck": "consify typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@consify/cli": "^1.0.4",
-    "@consify/core": "^1.0.4",
-    "@consify/docs": "^1.0.4",
+    "@consify/cli": "^1.0.5",
+    "@consify/core": "^1.0.5",
+    "@consify/docs": "^1.0.5",
     "isbot": "^5",
     "react": "19.3.0",
     "react-dom": "19.3.0",
