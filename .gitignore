@@ -1,0 +1,14 @@
+node_modules
+build
+.consify
+.source
+.react-router
+
+# synced from the Typemo repository by `bun run sync`: the pages and the data of the components
+content/*/docs/
+custom/generated/
+
+# Typemo checked out by CI
+.typemo/
+.next
+.idea

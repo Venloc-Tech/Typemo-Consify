@@ -1,0 +1,87 @@
+name: Deploy to GitHub Pages
+
+# The pages come from the Typemo repository. Typemo sends `typemo-docs` with the commit when its docs or packages
+# change (its workflow notify-docs.yml); a push here (components, plugins, config) builds from Typemo's main.
+on:
+  repository_dispatch:
+    types: [typemo-docs]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Typemo commit, branch or tag to build the docs of"
+        required: false
+        default: main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# one deploy at a time; a newer Typemo commit cancels the build of an older one
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  TYPEMO_REF: ${{ github.event.client_payload.sha || inputs.ref || 'main' }}
+  TYPEMO_DIR: ${{ github.workspace }}/.typemo
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out Typemo
+        uses: actions/checkout@v4
+        with:
+          repository: Venloc-Tech/Typemo
+          ref: ${{ env.TYPEMO_REF }}
+          path: .typemo
+
+      - uses: oven-sh/setup-bun@v2
+      # consify and its twoslash (TypeScript 7) run on Node
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # The twoslash blocks compile against the sources of this Typemo commit and its dependencies.
+      - name: Install Typemo
+        working-directory: .typemo
+        run: bun install --frozen-lockfile
+
+      # @consify/* are on GitHub Packages: a token with read:packages of the account that publishes them.
+      - name: Install the site
+        run: bun install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.CONSIFY_PACKAGES_TOKEN }}
+
+      - name: Sync the docs of Typemo
+        run: bun run sync
+
+      - name: Check
+        run: |
+          bunx consify doctor
+          bunx consify check
+          bun run typecheck
+          node scripts/check-twoslash.ts
+
+      - name: Build
+        run: bunx consify build
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/client
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

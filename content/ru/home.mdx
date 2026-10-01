@@ -1,0 +1,54 @@
+---
+title: Typemo
+description: "Строго типизированный ODM для MongoDB на TypeScript, написанный с нуля, — замена Mongoose"
+---
+
+<Hero
+  title="Typemo"
+  description="Строго типизированный ODM для MongoDB на TypeScript. Схема — это класс с декораторами, и класс — это тип: фильтры, обновления, проекции, populate, агрегации, результаты и ошибки типизированы из него."
+  actions={[
+    { label: "Быстрый старт", href: "/docs/v1/getting-started/quick-start" },
+    { label: "Переход с Mongoose", href: "/docs/v1/migration", variant: "secondary" },
+  ]}
+/>
+
+<Features
+  items={[
+    {
+      title: "Типы, совпадающие с базой",
+      description: "Одна предсказуемая форма на каждый вид результата: документ, lean, plain, JSON. Тесты сверяют тип компилятора с формой настоящего ответа MongoDB.",
+      icon: "ShieldCheck",
+      href: "/docs/v1/concepts",
+    },
+    {
+      title: "Строгость без выключателя",
+      description: "Неверное имя поля, значение не того типа, пустой фильтр в записи, оператор от клиента — ошибка компиляции или понятная ошибка во время работы.",
+      icon: "Lock",
+      href: "/docs/v1/concepts/strictness",
+    },
+    {
+      title: "Безопасная запись",
+      description: "Значения приводятся и проверяются до отправки, неизменяемые поля защищены на сервере, updateOne({}) не компилируется.",
+      icon: "PenLine",
+      href: "/docs/v1/writes",
+    },
+    {
+      title: "Политики из коробки",
+      description: "Мультитенантность, мягкое удаление, аудит, недоверенный ввод и маскирование чувствительных значений.",
+      icon: "Building",
+      href: "/docs/v1/policies",
+    },
+    {
+      title: "Видимые операции",
+      description: "События для каждой операции, транзакции и команды драйвера; адаптеры для OpenTelemetry и Sentry.",
+      icon: "Activity",
+      href: "/docs/v1/observability",
+    },
+    {
+      title: "NestJS и ИИ-агенты",
+      description: "Модуль для NestJS вместо @nestjs/mongoose и скилы для ИИ-агентов прямо в пакетах.",
+      icon: "Bot",
+      href: "/docs/v1/integrations",
+    },
+  ]}
+/>

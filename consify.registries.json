@@ -1,0 +1,8 @@
+{
+  "registries": {
+    "@shiz-ceo": {
+      "url": "https://consify.shiz-ceo.ru/r/{name}.json",
+      "default": true
+    }
+  }
+}

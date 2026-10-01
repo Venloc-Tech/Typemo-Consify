@@ -1,0 +1,243 @@
+/*
+ * Styles of the Typemo components (custom/components). Colors come from the tokens of the consify theme, so
+ * every component follows the light and the dark theme without its own palette.
+ */
+
+:root {
+  --tm-migration: oklch(0.55 0.2 300);
+  --tm-requires: oklch(0.72 0.15 75);
+}
+
+/* Callout: tip, warning, migration */
+.tm-callout {
+  display: flex;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-fd-border);
+  border-left: 3px solid var(--tm-callout-accent);
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--tm-callout-accent) 7%, var(--color-fd-card));
+  font-size: 0.925rem;
+}
+.tm-callout-tip { --tm-callout-accent: var(--color-fd-info); }
+.tm-callout-warning { --tm-callout-accent: var(--color-fd-warning); }
+.tm-callout-migration { --tm-callout-accent: var(--tm-migration); }
+.tm-callout-error { --tm-callout-accent: var(--color-fd-error); }
+.tm-callout-success { --tm-callout-accent: var(--color-fd-success); }
+.tm-callout-icon {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.15rem;
+  fill: none;
+  stroke: var(--tm-callout-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tm-callout-body { min-width: 0; flex: 1; }
+.tm-callout-title { margin: 0 0 0.25rem; font-weight: 600; color: var(--color-fd-foreground); }
+.tm-callout-content > :first-child { margin-top: 0; }
+.tm-callout-content > :last-child { margin-bottom: 0; }
+
+/* FullType */
+.tm-fulltype {
+  margin: 1rem 0;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 0.5rem;
+  background: var(--color-fd-card);
+}
+.tm-fulltype > summary {
+  cursor: pointer;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  color: var(--color-fd-muted-foreground);
+  user-select: none;
+}
+.tm-fulltype > summary:hover { color: var(--color-fd-foreground); }
+.tm-fulltype[open] > summary { border-bottom: 1px solid var(--color-fd-border); }
+.tm-fulltype-body { padding: 0 0.5rem; }
+.tm-fulltype-body > figure, .tm-fulltype-body > pre { margin: 0.5rem 0; }
+
+/* Params, Param, Returns */
+.tm-params { margin: 1.25rem 0; }
+.tm-params-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-fd-muted-foreground);
+}
+.tm-params-list { border-top: 1px solid var(--color-fd-border); }
+.tm-param { padding: 0.75rem 0; border-bottom: 1px solid var(--color-fd-border); }
+.tm-returns .tm-param { border-top: 1px solid var(--color-fd-border); }
+.tm-returns .tm-params-title { margin: 0; }
+.tm-param-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.625rem; }
+.tm-param-name { font-weight: 600; color: var(--color-fd-foreground); }
+.tm-param-type { color: var(--color-fd-muted-foreground); overflow-wrap: anywhere; }
+.tm-param-name, .tm-param-type { border: 0 !important; background: none !important; padding: 0 !important; }
+.tm-param-required {
+  font-size: 0.75rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  color: var(--color-fd-error);
+  border: 1px solid color-mix(in oklab, var(--color-fd-error) 40%, transparent);
+}
+.tm-param-default { font-size: 0.8rem; color: var(--color-fd-muted-foreground); }
+.tm-param-body { margin-top: 0.375rem; font-size: 0.925rem; }
+.tm-param-body > :first-child { margin-top: 0; }
+.tm-param-body > :last-child { margin-bottom: 0; }
+
+/* Badge: scope, requires */
+.tm-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+  vertical-align: middle;
+  border: 1px solid var(--color-fd-border);
+  color: var(--color-fd-muted-foreground);
+  background: var(--color-fd-muted);
+}
+.tm-badge-requires {
+  color: var(--color-fd-foreground);
+  border-color: color-mix(in oklab, var(--tm-requires) 50%, transparent);
+  background: color-mix(in oklab, var(--tm-requires) 18%, transparent);
+}
+
+/* Compare */
+.tm-compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+.tm-compare-column { display: flex; flex-direction: column; min-width: 0; }
+.tm-compare-column > figure, .tm-compare-column > pre { flex: 1; margin: 0; }
+.tm-compare-label { margin: 0 0 0.375rem; font-size: 0.8rem; font-weight: 600; color: var(--color-fd-muted-foreground); }
+@media (max-width: 768px) {
+  .tm-compare { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ValueForms */
+.tm-valueforms {
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 0.5rem;
+}
+.tm-valueforms table { margin: 0; border: 0; width: 100%; font-size: 0.8rem; border-collapse: collapse; }
+.tm-valueforms th, .tm-valueforms td { padding: 0.4rem 0.625rem; text-align: left; white-space: nowrap; }
+.tm-valueforms thead th { background: var(--color-fd-muted); }
+.tm-valueforms tbody tr + tr > * { border-top: 1px solid var(--color-fd-border); }
+.tm-valueforms tbody th { position: sticky; left: 0; background: var(--color-fd-card); }
+
+/* Term */
+.tm-term { position: relative; display: inline; }
+.tm-term-word { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
+.tm-term-card {
+  position: absolute;
+  z-index: 40;
+  left: 0;
+  top: calc(100% + 0.375rem);
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: min(22rem, 80vw);
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 0.5rem;
+  background: var(--color-fd-popover);
+  color: var(--color-fd-popover-foreground);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+.tm-term:hover .tm-term-card, .tm-term:focus-within .tm-term-card { display: flex; }
+.tm-term-more { font-size: 0.8rem; color: var(--color-fd-primary); }
+
+/* FileTree (```tree blocks) */
+.tm-tree {
+  margin: 1.25rem 0;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 0.5rem;
+  background: var(--color-fd-card);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.825rem;
+  overflow-x: auto;
+}
+.tm-tree-row { display: flex; align-items: center; gap: 0.4rem; white-space: nowrap; line-height: 1.7; }
+.tm-tree-icon {
+  flex: none;
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: none;
+  stroke: var(--color-fd-muted-foreground);
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+}
+.tm-tree-comment { margin-left: auto; padding-left: 1.5rem; color: var(--color-fd-muted-foreground); }
+
+/* Code accent: the violet of highlighted lines and words in code blocks, tuned per theme. */
+:root {
+  --tm-code-accent: color(display-p3 0.482353 0.262745 0.972549);
+  --tm-inline-code-fg: oklch(0.37 0.012 285);
+  --tm-inline-code-bg: oklch(0.965 0.003 285);
+  --tm-inline-code-border: oklch(0.9 0.006 285);
+}
+.dark {
+  --tm-code-accent: color(display-p3 0.615686 0.415686 0.984314);
+  --tm-inline-code-fg: oklch(0.86 0.01 285);
+  --tm-inline-code-bg: oklch(0.21 0.006 285);
+  --tm-inline-code-border: oklch(0.3 0.01 285);
+}
+
+/* Code blocks: a highlighted line (`{2,4-6}`, `// [!code highlight]`) is a deep violet band with an accent edge. */
+/* The class is doubled to outrank the codeblock rule of the theme (`.shiki:not(…) .highlighted::after`). */
+pre .line.highlighted.highlighted {
+  --fd-counter-color: var(--tm-code-accent);
+  background-color: color-mix(in oklab, var(--tm-code-accent) 8%, transparent);
+}
+.dark pre .line.highlighted.highlighted {
+  background-color: color-mix(in oklab, var(--tm-code-accent) 11%, transparent);
+}
+pre .line.highlighted.highlighted::after {
+  border-left-width: 2px;
+  border-left-style: solid;
+  border-color: var(--tm-code-accent);
+}
+pre .highlighted-word,
+pre .twoslash-highlighted {
+  border-color: color-mix(in oklab, var(--tm-code-accent) 55%, transparent);
+  background-color: color-mix(in oklab, var(--tm-code-accent) 16%, transparent);
+}
+
+/* Inline code in the text: a quiet grey chip, per theme. Code inside links keeps the link color. */
+.prose {
+  --tw-prose-code: var(--tm-inline-code-fg);
+}
+.prose :not(pre) > code:not(a code) {
+  background: var(--tm-inline-code-bg);
+  border-color: var(--tm-inline-code-border);
+}
+
+/*
+ * Body text justified. Hyphenation (the page is lang="ru") keeps a narrow screen from opening wide gaps between
+ * words; a long inline code chip cannot be hyphenated, so it may still leave a wider line here and there.
+ */
+.prose :where(p, li) {
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+/* a link is read as one name: never hyphenated */
+.prose :where(p, li) a {
+  hyphens: manual;
+  -webkit-hyphens: manual;
+}
