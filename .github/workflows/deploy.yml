@@ -42,7 +42,7 @@ jobs:
           path: .typemo
 
       - uses: oven-sh/setup-bun@v2
-      # consify and its twoslash (TypeScript 7) run on Node
+      # consify runs on Node (24 or newer)
       - uses: actions/setup-node@v4
         with:
           node-version: 24

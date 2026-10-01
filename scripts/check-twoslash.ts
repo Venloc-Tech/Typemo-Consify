@@ -1,6 +1,6 @@
 /*
  * `bun run check:twoslash [page.mdx | dir ...]`: compiles every ```ts twoslash block of the synced pages with the
- * twoslash of consify (the same transformer and compiler options as the site build), and lists every block that
+ * twoslash of consify (the same transformer, TypeScript and compiler options as the site build), and lists every block that
  * fails, instead of stopping at the first one like the build does. Exit code 1 when a block fails. It also fills the
  * twoslash cache the build reads.
  */
@@ -9,6 +9,7 @@ import { join, relative, resolve } from "node:path";
 import { transformerTwoslash } from "fumadocs-twoslash";
 import { createFileSystemTypesCache } from "fumadocs-twoslash/cache-fs";
 import { codeToHast } from "shiki";
+import ts from "typescript";
 import { TwoslashPopups } from "../custom/plugins/twoslash-popups.ts";
 import { TypemoTwoslash } from "../custom/twoslash.ts";
 
@@ -40,9 +41,13 @@ const blocksOf = (text: string): { line: number; code: string }[] => {
 
 const targets = process.argv.slice(2);
 const files = (targets.length > 0 ? targets.map((t) => resolve(t)) : [ROOT]).flatMap(collect);
+/* The options of docs.config.ts are tsconfig JSON; the compiler takes them parsed, as consify core converts them. */
+const parsed = ts.convertCompilerOptionsFromJson(TypemoTwoslash.compilerOptions(), SITE);
+if (parsed.errors.length > 0)
+  throw new Error(parsed.errors.map((e) => ts.flattenDiagnosticMessageText(e.messageText, "\n")).join("; "));
 /* The same cache as the build (docs.config.ts `cache: true`): checking first leaves the build only cached blocks. */
 const transformer = transformerTwoslash({
-  twoslashOptions: { compilerOptions: TypemoTwoslash.compilerOptions() },
+  twoslashOptions: { compilerOptions: parsed.options },
   typesCache: createFileSystemTypesCache({ cwd: SITE }),
 });
 

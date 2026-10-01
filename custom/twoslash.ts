@@ -3,9 +3,8 @@
  * passes the check there renders here with the same types and the same errors. The packages resolve to the
  * sources of the Typemo checkout (not to npm), so the site shows the types of the commit it was built from.
  *
- * Values are written as in a tsconfig: the twoslash of consify brings its own TypeScript, whose enum numbers
- * need not match the ones of the TypeScript installed here. No `node:` imports: docs.config.ts is loaded in the
- * browser too, where the options are never used.
+ * Values are written as in a tsconfig (`target: "esnext"`): consify converts them for the compiler. No `node:`
+ * imports: docs.config.ts is loaded in the browser too, where the options are never used.
  */
 export class TypemoTwoslash {
   /** TYPEMO_DIR (absolute, CI) or the sibling checkout `../Typemo` (local). */
