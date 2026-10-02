@@ -228,7 +228,7 @@ pre .twoslash-highlighted {
 }
 
 /*
- * Body text justified. Hyphenation (the page is lang="ru") keeps a narrow screen from opening wide gaps between
+ * Body text justified. Hyphenation (by the lang of the page, en or ru) keeps a narrow screen from opening wide gaps between
  * words; a long inline code chip cannot be hyphenated, so it may still leave a wider line here and there.
  */
 .prose :where(p, li) {

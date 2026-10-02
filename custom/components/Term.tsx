@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Link, useParams } from "react-router";
 import glossary from "../generated/glossary.json" with { type: "json" };
+import { useMessages } from "@consify/core/ui";
+import type { TypemoMessages } from "../plugins/typemo-strings.ts";
 
 /*
  * A term of the glossary (DOCS-COMPONENTS R11): the word stays in the sentence, the definition opens on hover or
@@ -17,8 +19,9 @@ const inline = (text: string): ReactNode[] =>
   });
 
 export default function Term({ id, children }: { id: string; children?: ReactNode }) {
-  const { lang = "ru" } = useParams();
-  const entries = (glossary as Record<string, Record<string, Entry>>)[lang] ?? glossary.ru;
+  const { lang = "en" } = useParams();
+  const t = useMessages<TypemoMessages>();
+  const entries = (glossary as Record<string, Record<string, Entry>>)[lang] ?? glossary.en;
   const entry = (entries as Record<string, Entry>)[id];
   if (!entry) throw new Error(`<Term id="${id}">: no such key in the glossary`);
   return (
@@ -31,7 +34,7 @@ export default function Term({ id, children }: { id: string; children?: ReactNod
         <span>{inline(entry.definition)}</span>
         {entry.href ? (
           <Link to={entry.href} className="tm-term-more">
-            Подробнее
+            {t["typemo.term.more"]}
           </Link>
         ) : null}
       </span>

@@ -3,7 +3,7 @@
  * custom components read (`custom/generated/`). Nothing synced is committed: the Typemo repository is the only
  * source of the pages, the site only renders them.
  *
- *  - docs/ru/v1            → content/ru/docs/v1 (the version folder gets `"root": "version"`)
+ *  - docs/<lang>/v1        → content/<lang>/docs/v1 for English and Russian (the version folder gets `"root": "version"`)
  *  - snippets/v1           → snippets/v1 (the code of the examples, `<Snippet id="…" />`)
  *  - BsonTypeTable         → custom/generated/value-forms.json (<ValueForms />)
  *  - appendix/glossary.mdx → custom/generated/glossary.json (<Term />)
@@ -14,7 +14,13 @@ import { dirname, posix, resolve } from "node:path";
 import { TypemoSource } from "./typemo-source.ts";
 
 const SITE = resolve(import.meta.dirname, "..");
-const LANGUAGES = ["ru"] as const;
+const LANGUAGES = ["en", "ru"] as const;
+
+/* The words that mark the key and the link of a glossary entry, in the language of the page. */
+const GLOSSARY_MARKERS: Record<(typeof LANGUAGES)[number], { key: string; more: string }> = {
+  en: { key: "Key:", more: "More:" },
+  ru: { key: "Ключ:", more: "Подробнее:" },
+};
 const VERSION = "v1";
 const GENERATED = resolve(SITE, "custom/generated");
 
@@ -85,8 +91,9 @@ class DocsSync {
     });
   }
 
-  /* An entry is `### Title`, then a paragraph that ends with "Ключ: `key`." and an optional "Подробнее: [..](..)." */
-  static glossary(language: string): Record<string, GlossaryEntry> {
+  /* An entry is `### Title`, then a paragraph that ends with "Key: `key`." and an optional "More: [..](..)." (in Russian "Ключ:", "Подробнее:") */
+  static glossary(language: (typeof LANGUAGES)[number]): Record<string, GlossaryEntry> {
+    const markers = GLOSSARY_MARKERS[language];
     const page = `docs/${language}/${VERSION}/appendix/glossary.mdx`;
     const text = readFileSync(TypemoSource.path(page), "utf8");
     const entries: Record<string, GlossaryEntry> = {};
@@ -94,21 +101,21 @@ class DocsSync {
       const [, rawTitle = "", body = ""] = match;
       /* the explicit id of the heading (`### Документ [#document]`) is not part of the title */
       const title = rawTitle.replace(/\s*\[#[^\]]+\]\s*$/, "");
-      const key = /Ключ: `([^`]+)`/.exec(body)?.[1];
+      const key = new RegExp(`${markers.key} \`([^\`]+)\``).exec(body)?.[1];
       if (!key) continue;
       if (entries[key]) throw new Error(`${page}: the key ${key} is used twice`);
-      const link = /Подробнее: \[[^\]]*\]\(([^)]+)\)/.exec(body)?.[1];
+      const link = new RegExp(`${markers.more} \\[[^\\]]*\\]\\(([^)]+)\\)`).exec(body)?.[1];
       entries[key] = {
         title: title.trim(),
-        definition: body.slice(0, body.indexOf(" Ключ:")).trim(),
+        definition: body.slice(0, body.indexOf(` ${markers.key}`)).trim(),
         href: link ? DocsSync.pageUrl(language, "appendix/glossary.mdx", link) : null,
       };
     }
-    if (Object.keys(entries).length === 0) throw new Error(`${page}: no entries with "Ключ:" found`);
+    if (Object.keys(entries).length === 0) throw new Error(`${page}: no entries with "${markers.key}" found`);
     return entries;
   }
 
-  /** A relative `.mdx` link of a page → the address of the site (`/ru/docs/v1/...`). */
+  /** A relative `.mdx` link of a page → the address of the site (`/en/docs/v1/...`). */
   static pageUrl(language: string, fromPage: string, href: string): string {
     const [path = "", anchor] = href.split("#");
     const target = posix.normalize(posix.join(posix.dirname(fromPage), path)).replace(/(^|\/)index\.mdx$/, "").replace(/\.mdx$/, "");

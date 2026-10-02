@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { useMessages } from "@consify/core/ui";
+import type { TypemoMessages } from "../plugins/typemo-strings.ts";
 
 /*
  * Replaces the built-in Callout: the docs of Typemo have exactly three kinds of notes (DOCS-COMPONENTS R1), and
@@ -7,15 +9,15 @@ import type { ReactNode } from "react";
  */
 type Kind = "tip" | "warning" | "migration" | "info" | "warn" | "error" | "success" | "idea";
 
-const KINDS: Record<Kind, { tone: "tip" | "warning" | "migration" | "error" | "success"; title: string }> = {
-  tip: { tone: "tip", title: "Подсказка" },
-  idea: { tone: "tip", title: "Подсказка" },
-  info: { tone: "tip", title: "Заметка" },
-  warning: { tone: "warning", title: "Внимание" },
-  warn: { tone: "warning", title: "Внимание" },
-  error: { tone: "error", title: "Ошибка" },
-  success: { tone: "success", title: "Готово" },
-  migration: { tone: "migration", title: "Если вы пришли из Mongoose" },
+const KINDS: Record<Kind, { tone: "tip" | "warning" | "migration" | "error" | "success"; title: keyof TypemoMessages }> = {
+  tip: { tone: "tip", title: "typemo.callout.tip" },
+  idea: { tone: "tip", title: "typemo.callout.tip" },
+  info: { tone: "tip", title: "typemo.callout.note" },
+  warning: { tone: "warning", title: "typemo.callout.warning" },
+  warn: { tone: "warning", title: "typemo.callout.warning" },
+  error: { tone: "error", title: "typemo.callout.error" },
+  success: { tone: "success", title: "typemo.callout.success" },
+  migration: { tone: "migration", title: "typemo.callout.migration" },
 };
 
 const ICONS: Record<(typeof KINDS)[Kind]["tone"], ReactNode> = {
@@ -27,6 +29,7 @@ const ICONS: Record<(typeof KINDS)[Kind]["tone"], ReactNode> = {
 };
 
 export default function Callout({ type = "tip", title, children }: { type?: Kind; title?: string; children?: ReactNode }) {
+  const t = useMessages<TypemoMessages>();
   const kind = KINDS[type] ?? KINDS.tip;
   return (
     <aside className={`tm-callout tm-callout-${kind.tone}`}>
@@ -34,7 +37,7 @@ export default function Callout({ type = "tip", title, children }: { type?: Kind
         {ICONS[kind.tone]}
       </svg>
       <div className="tm-callout-body">
-        <p className="tm-callout-title">{title ?? kind.title}</p>
+        <p className="tm-callout-title">{title ?? t[kind.title]}</p>
         <div className="tm-callout-content">{children}</div>
       </div>
     </aside>

@@ -14,7 +14,7 @@ export class TypemoSource {
   }
 
   static assertPresent(): void {
-    if (!existsSync(TypemoSource.path("docs/ru/v1/meta.json")))
+    if (!existsSync(TypemoSource.path("docs/en/v1/meta.json")))
       throw new Error(
         `Typemo is not found at ${TypemoSource.root}: set TYPEMO_DIR to a checkout of Venloc-Tech/Typemo`,
       );

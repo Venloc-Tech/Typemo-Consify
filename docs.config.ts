@@ -1,13 +1,14 @@
 import { defineConfig } from "@consify/core";
 import { docs } from "@consify/docs";
 import { twoslashPopups } from "./custom/plugins/twoslash-popups.ts";
+import { typemoStrings } from "./custom/plugins/typemo-strings.ts";
 import { typemoMarkdown } from "./custom/plugins/typemo-markdown.ts";
 import { TypemoTwoslash } from "./custom/twoslash.ts";
 
 export default defineConfig({
   site: {
     name: "Typemo",
-    description: "Строго типизированный ODM для MongoDB на TypeScript — замена Mongoose",
+    description: "A strictly typed MongoDB ODM for TypeScript, a replacement for Mongoose",
     url: "https://typemo.shiz-ceo.ru",
     github: { repo: "Venloc-Tech/Typemo", branch: "main" },
   },
@@ -15,18 +16,19 @@ export default defineConfig({
   // Plain files for GitHub Pages under its own domain (public/CNAME), no basePath.
   deploy: { mode: "static" },
 
-  // English joins when docs/en/v1 of Typemo has pages.
+  // English is the main language: the root of the site opens it, a page missing in Russian is shown in English with a note.
   i18n: {
-    defaultLanguage: "ru",
-    languages: ["ru"],
-    labels: { ru: "Русский" },
+    defaultLanguage: "en",
+    languages: ["en", "ru"],
+    labels: { en: "English", ru: "Русский" },
+    fallback: "notice",
   },
 
   mdx: {
     // The cache is keyed by the text of a block only, not by the Typemo types behind it: `bun run sync` empties it
     // with every sync, and `check:twoslash` fills it before a build (a page has 10 s to prerender).
     twoslash: { compilerOptions: { ...TypemoTwoslash.compilerOptions() }, cache: true },
-    plugins: [typemoMarkdown, twoslashPopups],
+    plugins: [typemoMarkdown, twoslashPopups, typemoStrings],
   },
 
   features: [
@@ -37,7 +39,7 @@ export default defineConfig({
       editOnGithub: false,
       // the code of the examples lives in snippets/ (synced from Typemo), the same file for every language
       snippets: true,
-      // every heading has a permanent English id (`[#quick-start]`), listed in docs/ru/v1/anchors.json
+      // every heading has a permanent English id (`[#quick-start]`), listed in anchors.json of the default language (docs/en/v1)
       anchors: true,
     }),
   ],

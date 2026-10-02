@@ -1,0 +1,54 @@
+---
+title: Typemo
+description: "A strictly typed MongoDB ODM for TypeScript, written from scratch as a replacement for Mongoose"
+---
+
+<Hero
+  title="Typemo"
+  description="A strictly typed MongoDB ODM for TypeScript. A schema is a class with decorators, and the class is the type. Filters, updates, projections, populate, aggregations, results and errors are all typed from it."
+  actions={[
+    { label: "Quick start", href: "/docs/v1/getting-started/quick-start" },
+    { label: "Migrating from Mongoose", href: "/docs/v1/migration", variant: "secondary" },
+  ]}
+/>
+
+<Features
+  items={[
+    {
+      title: "Types that match the database",
+      description: "One predictable shape for each kind of result: document, lean, plain, JSON. Tests compare the compiler's type with the shape of a real MongoDB response.",
+      icon: "ShieldCheck",
+      href: "/docs/v1/concepts",
+    },
+    {
+      title: "Strictness with no off switch",
+      description: "A wrong field name, a value of the wrong type, an empty filter in a write, an operator from a client: each is a compile error or a clear runtime error.",
+      icon: "Lock",
+      href: "/docs/v1/concepts/strictness",
+    },
+    {
+      title: "Safe writes",
+      description: "Values are cast and validated before they are sent, immutable fields are protected on the server, and updateOne({}) does not compile.",
+      icon: "PenLine",
+      href: "/docs/v1/writes",
+    },
+    {
+      title: "Policies out of the box",
+      description: "Multi-tenancy, soft delete, audit, untrusted input and masking of sensitive values.",
+      icon: "Building",
+      href: "/docs/v1/policies",
+    },
+    {
+      title: "Visible operations",
+      description: "Events for every operation, transaction and driver command, with adapters for OpenTelemetry and Sentry.",
+      icon: "Activity",
+      href: "/docs/v1/observability",
+    },
+    {
+      title: "NestJS and AI agents",
+      description: "A NestJS module that replaces @nestjs/mongoose, and skills for AI agents shipped inside the packages.",
+      icon: "Bot",
+      href: "/docs/v1/integrations",
+    },
+  ]}
+/>

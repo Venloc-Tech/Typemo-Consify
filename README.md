@@ -16,7 +16,7 @@ Typemo must be checked out next to this folder (`../Typemo`), with its dependenc
 
 | Command | What it does |
 | --- | --- |
-| `bun run sync` | copies `docs/ru/v1` of Typemo into `content/ru/docs/v1`, generates the data of `ValueForms` (from `BsonTypeTable`) and `Term` (from the glossary), empties the twoslash cache |
+| `bun run sync` | copies `docs/en/v1` and `docs/ru/v1` of Typemo into `content/en/docs/v1` and `content/ru/docs/v1`, generates the data of `ValueForms` (from `BsonTypeTable`) and `Term` (from the glossary), empties the twoslash cache |
 | `bun run check:twoslash` | compiles every twoslash block the way the build does and lists every failure (the build stops at the first one); warns about blocks heavier than 300 kB; fills the twoslash cache the build reads |
 | `bun run check` | `consify check`: addresses, front matter, `meta.json` |
 | `bun run typecheck` | the site's own TypeScript |
