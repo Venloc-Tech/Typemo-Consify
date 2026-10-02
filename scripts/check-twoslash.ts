@@ -5,22 +5,35 @@
  * block that fails, instead of stopping at the first one like the build does. Exit code 1 when a block fails. It also
  * fills the twoslash cache the build reads.
  *
+ * Only what the build would compile is compiled. The pages of every language insert the same snippet files, so a
+ * block is compiled once however many pages show it, and a block already in the cache is skipped: the cache is keyed
+ * by the text of a block, and `bun run sync` empties it whenever the Typemo sources change.
+ *
  * The blocks are compiled by worker threads, one block at a time as each worker gets free (a slow page does not hold
  * the others back). Each worker has its own compiler with the types of Typemo loaded (about 1.1 GB), so the default
  * is the number of cores, at most 4; TWOSLASH_WORKERS sets it. Progress is printed every 100 blocks.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { availableParallelism } from "node:os";
+import { createHash } from "node:crypto";
 import { join, relative, resolve } from "node:path";
 import { isMainThread, parentPort, Worker } from "node:worker_threads";
 
 const SITE = resolve(import.meta.dirname, "..");
 const ROOT = resolve(SITE, "content");
+/* The folder of createFileSystemTypesCache (fumadocs-twoslash/cache-fs), which the build reads too. */
+const CACHE = resolve(SITE, ".next/cache/twoslash");
 
 /** One block to compile: where it is (for the report) and its code. */
 interface Block {
   readonly where: string;
   readonly code: string;
+}
+
+/** The blocks with the same code: compiled once, reported at every place. */
+interface Unique {
+  readonly code: string;
+  readonly where: string[];
 }
 
 /** What a worker answers for a block: `null` when it compiled, the first line of the error otherwise. */
@@ -86,6 +99,22 @@ class TwoslashCheck {
     return blocks;
   }
 
+  /** The file the cache keeps a block in: the first 12 hex digits of the SHA-256 of its code, as cache-fs names it. */
+  static cached(code: string): boolean {
+    return existsSync(join(CACHE, `${createHash("SHA256").update(code).digest("hex").slice(0, 12)}.json`));
+  }
+
+  /** The blocks grouped by code, without those the cache already holds. */
+  static toCompile(blocks: readonly Block[]): Unique[] {
+    const byCode = new Map<string, string[]>();
+    for (const block of blocks) {
+      const places = byCode.get(block.code);
+      if (places) places.push(block.where);
+      else byCode.set(block.code, [block.where]);
+    }
+    return [...byCode].filter(([code]) => !TwoslashCheck.cached(code)).map(([code, where]) => ({ code, where }));
+  }
+
   static workerCount(blocks: number): number {
     const fromEnv = Number(process.env.TWOSLASH_WORKERS);
     const wanted =
@@ -98,10 +127,16 @@ class TwoslashCheck {
   static async main(): Promise<void> {
     const targets = process.argv.slice(2);
     const files = (targets.length > 0 ? targets.map((t) => resolve(t)) : [ROOT]).flatMap(TwoslashCheck.collect);
-    const blocks = files.flatMap(TwoslashCheck.blocksOf);
-    const count = TwoslashCheck.workerCount(blocks.length);
+    const all = files.flatMap(TwoslashCheck.blocksOf);
+    const unique = new Set(all.map((block) => block.code)).size;
+    const blocks = TwoslashCheck.toCompile(all);
     const started = Date.now();
-    console.log(`${blocks.length} twoslash blocks in ${files.length} pages, ${count} worker(s)`);
+    console.log(
+      `${all.length} twoslash blocks in ${files.length} pages, ${unique} different, ${unique - blocks.length} cached, ${blocks.length} to compile`,
+    );
+    if (blocks.length === 0) process.exit(0);
+    const count = TwoslashCheck.workerCount(blocks.length);
+    console.log(`${count} worker(s)`);
 
     const failures: string[] = [];
     let next = 0;
@@ -119,7 +154,7 @@ class TwoslashCheck {
           worker.on("message", (answer: Answer) => {
             done++;
             if (answer.error !== null) {
-              failures.push(`${blocks[answer.index]?.where}: ${answer.error}`);
+              failures.push(`${blocks[answer.index]?.where.join(", ")}: ${answer.error}`);
               console.log(failures.at(-1));
             }
             if (done % TwoslashCheck.PROGRESS_EVERY === 0 || done === blocks.length)
