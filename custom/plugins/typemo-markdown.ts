@@ -4,8 +4,8 @@ import { definePlugin } from "@consify/core/plugins";
  * What the pages of Typemo expect from the build (DOCS-COMPONENTS, part 4) and consify does not do by itself:
  *  - relative links to `.mdx` files become addresses of the site: consify resolves them in Markdown links, but
  *    not in `href` of components (`<Card href="./x.mdx">`), so both are resolved here, the same way;
- *  - a component inside a heading (`## Model.watch <Badge>…</Badge>`) stays out of the anchor and the table of
- *    contents, so adding a label never breaks the links to the element;
+ *  - a component inside a heading (`## Model.watch <Badge>…</Badge>`) stays out of the table of contents, and out
+ *    of the anchor when the heading has no explicit `[#id]`, so adding a label never breaks the links to the element;
  *  - ```package-install tabs start with bun and share one choice across the site;
  *  - a ```tree block becomes a file tree.
  */
@@ -80,6 +80,11 @@ export class TypemoMarkdown {
       .replace(/\s/g, "-");
   }
 
+  /** The shape of the explicit ids of the docs (`[#quick-start]`, `[#model.find]`): an auto id of a heading with a component keeps the component text and does not match. */
+  static isExplicitId(id: unknown): boolean {
+    return typeof id === "string" && /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/.test(id);
+  }
+
   static textOf(node: Node): string {
     if (node.type === "mdxJsxTextElement" || node.type === "mdxJsxFlowElement") return "";
     if (typeof node.value === "string") return node.value;
@@ -95,7 +100,8 @@ export class TypemoMarkdown {
         const text = TypemoMarkdown.textOf(node).trim();
         const props = (node.data ??= {}).hProperties ?? (node.data.hProperties = {});
         const before = props.id;
-        props.id = TypemoMarkdown.slug(text);
+        /* an explicit id (`## .limit <Badge>…</Badge> [#limit]`) is permanent and the same in every language: keep it */
+        if (!TypemoMarkdown.isExplicitId(before)) props.id = TypemoMarkdown.slug(text);
         const entry = toc.find((item) => item.url === `#${String(before)}`);
         if (entry) {
           entry.url = `#${String(props.id)}`;

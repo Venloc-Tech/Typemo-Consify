@@ -80,7 +80,9 @@ class DocsSync {
     const text = readFileSync(TypemoSource.path(page), "utf8");
     const entries: Record<string, GlossaryEntry> = {};
     for (const match of text.matchAll(/^### (.+)\n\n(.+)$/gm)) {
-      const [, title = "", body = ""] = match;
+      const [, rawTitle = "", body = ""] = match;
+      /* the explicit id of the heading (`### Документ [#document]`) is not part of the title */
+      const title = rawTitle.replace(/\s*\[#[^\]]+\]\s*$/, "");
       const key = /Ключ: `([^`]+)`/.exec(body)?.[1];
       if (!key) continue;
       if (entries[key]) throw new Error(`${page}: the key ${key} is used twice`);
