@@ -5,9 +5,9 @@
     "": {
       "name": "typemo-docs",
       "dependencies": {
-        "@consify/cli": "^1.0.6",
-        "@consify/core": "^1.0.6",
-        "@consify/docs": "^1.0.6",
+        "@consify/cli": "^1.1.0",
+        "@consify/core": "^1.1.0",
+        "@consify/docs": "^1.1.0",
         "isbot": "^5",
         "react": "19.3.0",
         "react-dom": "19.3.0",
@@ -75,11 +75,11 @@
 
     "@chevrotain/utils": ["@chevrotain/utils@11.1.2", "", {}, "sha512-4mudFAQ6H+MqBTfqLmU7G1ZwRzCLfJEooL/fsF6rCX5eePMbGhoy5n4g+G4vlh2muDcsCTJtL+uKbOzWxs5LHA=="],
 
-    "@consify/cli": ["@consify/cli@1.0.6", "https://npm.pkg.github.com/download/@consify/cli/1.0.6/9c4cf2ee4a829cbe4038a652b8da5284f28d30df", { "dependencies": { "@react-router/express": "8.4.0", "commander": "^15.0.0", "compression": "^1.8.1", "express": "^5.2.1", "morgan": "^1.10.1", "zod": "4.6.5" }, "peerDependencies": { "@consify/core": "^1.0.6" }, "bin": { "consify": "bin/consify" } }, "sha512-2qNjfxC7M3NWs7BZj0ef4+0q1jNy3l+85oQUNj7RqCg2HKLCBqYKf0W7PZxaKN0CII4OhXMz6magWsYLFPJ2pQ=="],
+    "@consify/cli": ["@consify/cli@1.1.0", "https://npm.pkg.github.com/download/@consify/cli/1.1.0/2daff5e6e25e1159d79258bec2a677672ec56b94", { "dependencies": { "@react-router/express": "8.4.0", "commander": "^15.0.0", "compression": "^1.8.1", "express": "^5.2.1", "morgan": "^1.10.1", "zod": "4.6.5" }, "peerDependencies": { "@consify/core": "^1.1.0" }, "bin": { "consify": "bin/consify" } }, "sha512-e0hQ0OCnOCIEEH7BU5V79XtAiI/kI6CSpNn1RwaoD//oji6LYKGhbXrPpDezE+eCFWbaOhYHVIacA50m80MmYg=="],
 
-    "@consify/core": ["@consify/core@1.0.6", "https://npm.pkg.github.com/download/@consify/core/1.0.6/cbd9b1f5dc84adb7c75f267ea2467eeef2491599", { "dependencies": { "@fontsource-variable/geist": "5.3.0", "@fontsource-variable/geist-mono": "5.3.0", "@mdx-js/mdx": "3.1.1", "@react-router/dev": "8.4.0", "@react-router/node": "8.4.0", "@react-router/serve": "8.4.0", "@tailwindcss/vite": "4.3.3", "@types/mdx": "2.0.14", "fumadocs-core": "16.15.13", "fumadocs-twoslash": "3.3.1", "fumadocs-ui": "16.15.13", "isbot": "5.2.2", "katex": "0.18.9", "lucide-react": "1.47.0", "mermaid": "12.0.0", "next-themes": "0.4.6", "rehype-katex": "7.0.1", "remark-math": "6.0.0", "shiki": "4.4.3", "tailwindcss": "4.3.3", "takumi-js": "2.14.0", "typescript": "6.0.3", "unified": "11.0.5", "yaml": "2.9.1", "zod": "4.6.5" }, "peerDependencies": { "react": "^19.2.0", "react-dom": "^19.2.0", "react-router": "^8.4.0", "vite": "^7.0.0 || ^8.0.0" } }, "sha512-zVmK/PY5IuI7p0D4I+adVJ/lCyHOGPSBvx3CU5rpXYlWX1UmQ/KPgEb/cXBdNEq49URMMabhddMv0dGFdFIjzA=="],
+    "@consify/core": ["@consify/core@1.1.0", "https://npm.pkg.github.com/download/@consify/core/1.1.0/68d2597dbf39eb843bc9bfe5a305a329f36c8056", { "dependencies": { "@fontsource-variable/geist": "5.3.0", "@fontsource-variable/geist-mono": "5.3.0", "@mdx-js/mdx": "3.1.1", "@react-router/dev": "8.4.0", "@react-router/node": "8.4.0", "@react-router/serve": "8.4.0", "@tailwindcss/vite": "4.3.3", "@types/mdx": "2.0.14", "fumadocs-core": "16.15.13", "fumadocs-twoslash": "3.3.1", "fumadocs-ui": "16.15.13", "isbot": "5.2.2", "katex": "0.18.9", "lucide-react": "1.47.0", "mermaid": "12.0.0", "next-themes": "0.4.6", "rehype-katex": "7.0.1", "remark-math": "6.0.0", "shiki": "4.4.3", "tailwindcss": "4.3.3", "takumi-js": "2.14.0", "typescript": "6.0.3", "unified": "11.0.5", "yaml": "2.9.1", "zod": "4.6.5" }, "peerDependencies": { "react": "^19.2.0", "react-dom": "^19.2.0", "react-router": "^8.4.0", "vite": "^7.0.0 || ^8.0.0" } }, "sha512-jYoA6avurlJoavjzgRvtNN41H+GxYy1VDmwYytVoKJ18C0inXh7YVuRLgJlFAOKIaeh0ER9r5QOqtsvALUsCQQ=="],
 
-    "@consify/docs": ["@consify/docs@1.0.6", "https://npm.pkg.github.com/download/@consify/docs/1.0.6/770572d864f40e7db2ef2cfcd69c1ea1c6c7d8da", { "dependencies": { "fumadocs-core": "16.15.13", "fumadocs-ui": "16.15.13", "zod": "4.6.5" }, "peerDependencies": { "@consify/core": "^1.0.6", "react": "^19.2.0", "react-dom": "^19.2.0", "react-router": "^8.4.0" } }, "sha512-F9VrPJw78BawDxsApA7jva34Mbo9OojFJNgkO1FUzWeZr2kB0xwgsPwzyJkxJ0pgk5wjzkF+6VHPgXYVwh78Hw=="],
+    "@consify/docs": ["@consify/docs@1.1.0", "https://npm.pkg.github.com/download/@consify/docs/1.1.0/4a8fc7f08cc693232ebcd982a9fcc07e28b627c4", { "dependencies": { "fumadocs-core": "16.15.13", "fumadocs-ui": "16.15.13", "zod": "4.6.5" }, "peerDependencies": { "@consify/core": "^1.1.0", "react": "^19.2.0", "react-dom": "^19.2.0", "react-router": "^8.4.0" } }, "sha512-lNmnAskAuHUQGwytX2HDixg9MWlcYlq0z7k69xiwYVxEt6U8USLw/dXhHlx9rP4ogy5p+q8xQxSz42s3S7yQxg=="],
 
     "@floating-ui/core": ["@floating-ui/core@1.8.0", "", { "dependencies": { "@floating-ui/utils": "^0.2.12" } }, "sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ=="],
 
