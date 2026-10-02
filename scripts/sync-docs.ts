@@ -4,6 +4,7 @@
  * source of the pages, the site only renders them.
  *
  *  - docs/ru/v1            → content/ru/docs/v1 (the version folder gets `"root": "version"`)
+ *  - snippets/v1           → snippets/v1 (the code of the examples, `<Snippet id="…" />`)
  *  - BsonTypeTable         → custom/generated/value-forms.json (<ValueForms />)
  *  - appendix/glossary.mdx → custom/generated/glossary.json (<Term />)
  */
@@ -35,6 +36,16 @@ class DocsSync {
   static writeJson(path: string, value: unknown): void {
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
+  }
+
+  /* The code of the examples: one file per example for the pages of every language (`<Snippet id="…" />`). */
+  static copySnippets(): void {
+    const snippets = resolve(SITE, "snippets");
+    rmSync(snippets, { recursive: true, force: true });
+    cpSync(TypemoSource.path("snippets", VERSION), resolve(snippets, VERSION), {
+      recursive: true,
+      filter: (path) => !path.endsWith(".gitkeep"),
+    });
   }
 
   static copyPages(language: string): void {
@@ -108,6 +119,7 @@ class DocsSync {
     TypemoSource.assertPresent();
     /* the twoslash cache is keyed by block text only: other Typemo sources mean other types */
     rmSync(resolve(SITE, ".next/cache/twoslash"), { recursive: true, force: true });
+    DocsSync.copySnippets();
     for (const language of LANGUAGES) DocsSync.copyPages(language);
     DocsSync.writeJson(resolve(GENERATED, "value-forms.json"), await DocsSync.valueForms());
     DocsSync.writeJson(

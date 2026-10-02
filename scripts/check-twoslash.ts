@@ -1,5 +1,6 @@
 /*
- * `bun run check:twoslash [page.mdx | dir ...]`: compiles every ```ts twoslash block of the synced pages with the
+ * `bun run check:twoslash [page.mdx | dir ...]`: compiles every ```ts twoslash block of the synced pages — written
+ * in the page or inserted by a `<Snippet id="…" twoslash />` tag from snippets/<version>/ — with the
  * twoslash of consify (the same transformer, TypeScript and compiler options as the site build), and lists every
  * block that fails, instead of stopping at the first one like the build does. Exit code 1 when a block fails. It also
  * fills the twoslash cache the build reads.
@@ -8,7 +9,7 @@
  * the others back). Each worker has its own compiler with the types of Typemo loaded (about 1.1 GB), so the default
  * is the number of cores, at most 4; TWOSLASH_WORKERS sets it. Progress is printed every 100 blocks.
  */
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { availableParallelism } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { isMainThread, parentPort, Worker } from "node:worker_threads";
@@ -37,11 +38,39 @@ class TwoslashCheck {
     return path.endsWith(".mdx") ? [path] : [];
   }
 
-  /** The ```ts twoslash blocks of a page, with the line each one starts at. */
+  /**
+   * The code of a `<Snippet>` tag, the way consify inserts it: the variant of the page language
+   * (`snippets/<version>/<lang>/<id>`) or the common file, a `#region` when the id names one.
+   */
+  static snippetCode(file: string, id: string): string {
+    const page = /content\/([^/]+)\/docs\/([^/]+)\//.exec(file.replaceAll("\\", "/"));
+    const [lang = "", version = "WITHOUT_VERSION"] = page ? [page[1], page[2]] : [];
+    const [path = "", region] = id.split("#");
+    const candidates = [lang ? `${version}/${lang}/${path}` : "", `${version}/${path}`]
+      .filter(Boolean)
+      .flatMap((base) => [".ts", ".tsx"].map((ext) => resolve(SITE, "snippets", base + ext)));
+    const found = candidates.find((candidate) => existsSync(candidate));
+    if (!found) throw new Error(`${relative(SITE, file)}: snippet ${id} not found (tried ${candidates.map((c) => relative(SITE, c)).join(", ")})`);
+    const text = readFileSync(found, "utf8").replace(/\n$/, "");
+    if (region === undefined) return text;
+    const lines = text.split("\n");
+    const start = lines.findIndex((l) => new RegExp(`#region ${region}\\b`).test(l));
+    const end = lines.findIndex((l, i) => i > start && /#endregion/.test(l));
+    if (start < 0 || end < 0) throw new Error(`${relative(SITE, file)}: region ${region} not found in ${relative(SITE, found)}`);
+    return lines.slice(start + 1, end).join("\n");
+  }
+
+  /** The twoslash blocks of a page (fenced or `<Snippet … twoslash />`), with the line each one starts at. */
   static blocksOf(file: string): Block[] {
     const blocks: Block[] = [];
     const lines = readFileSync(file, "utf8").split("\n");
     for (let i = 0; i < lines.length; i++) {
+      const tag = /^\s*<Snippet\s([^>]*)\/>\s*$/.exec(lines[i] ?? "");
+      const id = tag ? /\bid="([^"]+)"/.exec(tag[1] ?? "")?.[1] : undefined;
+      if (tag && id && /(^|\s)twoslash(\s|$)/.test(tag[1] ?? "")) {
+        blocks.push({ where: `${relative(SITE, file)}:${i + 1} (${id})`, code: TwoslashCheck.snippetCode(file, id) });
+        continue;
+      }
       const open = /^(\s*)```ts twoslash\b/.exec(lines[i] ?? "");
       if (!open) continue;
       const indent = open[1]?.length ?? 0;

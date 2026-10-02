@@ -35,6 +35,10 @@ export default defineConfig({
       // The pages live in docs/<lang>/<version> of Typemo; consify builds the link as <dir>/<lang>/docs/<path>,
       // which cannot point there, so no link instead of a broken one.
       editOnGithub: false,
+      // the code of the examples lives in snippets/ (synced from Typemo), the same file for every language
+      snippets: true,
+      // every heading has a permanent English id (`[#quick-start]`), listed in docs/ru/v1/anchors.json
+      anchors: true,
     }),
   ],
 });
